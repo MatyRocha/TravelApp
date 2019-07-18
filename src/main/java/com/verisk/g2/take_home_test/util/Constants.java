@@ -17,6 +17,6 @@ public final class Constants {
     public static final String ROUTE_FILENAME = "routes.csv";
 
     // For testing purposes
-//    private static final String ROUTE_FILENAME = "routesTest.csv";
+//    public static final String ROUTE_FILENAME = "routesTest.csv";
 
 }

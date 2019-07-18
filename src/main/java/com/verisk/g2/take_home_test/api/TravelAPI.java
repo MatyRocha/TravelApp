@@ -24,7 +24,7 @@ public class TravelAPI {
 
         if (route.length < 2) {
             if (route[0].equalsIgnoreCase(Constants.NO_ROUTE)) {
-                return new ResponseEntity<String[]>(route, HttpStatus.NO_CONTENT);
+                return new ResponseEntity<String[]>(route, HttpStatus.NOT_FOUND);
             } else if (route[0].equalsIgnoreCase(Constants.FILE_NOT_FOUND)) {
                 return new ResponseEntity<String[]>(route, HttpStatus.INTERNAL_SERVER_ERROR);
             } else if (route[0].equalsIgnoreCase(Constants.INVALID_ORIGIN) ||
