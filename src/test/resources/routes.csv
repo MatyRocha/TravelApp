@@ -1,0 +1,6 @@
+Airline Id,Origin,Destination
+AC,YYZ,JFK
+AC,JFK,YYZ
+AC,LAX,YVR
+AC,YVR,LAX
+UA,JFK,LAX
