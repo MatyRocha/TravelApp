@@ -4,6 +4,7 @@ import com.verisk.g2.take_home_test.dao.AirlineDAO;
 import com.verisk.g2.take_home_test.dao.AirportDAO;
 import com.verisk.g2.take_home_test.dao.RouteDAO;
 import com.verisk.g2.take_home_test.dto.Route;
+import com.verisk.g2.take_home_test.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,19 +24,19 @@ public class TravelService {
     public String calculateShortRoute(String orign, String destination){
         String result = "";
         if ( !areValidCatalogs() ) {
-            result = "Error on loading catalogs";
+            result = Constants.FILE_NOT_FOUND;
         } else {
             List<Route> routesOrigin = routesDAO.getRoutes().stream()
                     .filter(route-> route.getOrigin().equalsIgnoreCase(orign))
                     .collect(Collectors.toList());
             if (routesOrigin.isEmpty()) {
-                result = "Invalid Origin";
+                result = Constants.INVALID_ORIGIN;
             } else {
                 List<Route> routesDest = routesDAO.getRoutes().stream()
                         .filter(route-> route.getDestination().equalsIgnoreCase(destination))
                         .collect(Collectors.toList());
                 if (routesDest.isEmpty()){
-                    result = "Invalid Destination";
+                    result = Constants.INVALID_DESTINATION;
                 } else {
                     result = calculateRoute(routesOrigin, orign, destination);
                 }
@@ -102,7 +103,7 @@ public class TravelService {
             result = doNextSearch(nextOptions, origin, destination);
         } else if (nextOptions.isEmpty() && result.isEmpty()) {
             // no more options, and no results yet
-            result = "No route";
+            result = Constants.NO_ROUTE;
         }
         return result;
     }
