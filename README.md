@@ -2,6 +2,9 @@
 
 This service provide a query to get the shortest fly route from an Origin and a Destination
 
+#_Prerequisite_
+You will need java 8 and maven installed in your computer.
+
 ##_Build the project_
 To build the project and perform the unit testing process you just need to execute, inside the project's root folder,  in a console the command
 ```
