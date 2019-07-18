@@ -17,7 +17,8 @@ public class TravelAPI {
     @RequestMapping(value="/travel", method=RequestMethod.GET, produces = "application/json")
     public ResponseEntity<String[]> TravelAPI(@RequestParam String origin, @RequestParam String destination) {
         if (origin.isEmpty() || destination.isEmpty()) {
-            return new ResponseEntity<String[]>(Constants.MISSING_PARAMETERS_INFO.split(" -> "), HttpStatus.BAD_REQUEST);
+            String err[] = {Constants.MISSING_PARAMETERS_INFO};
+            return new ResponseEntity<String[]>(err, HttpStatus.BAD_REQUEST);
         }
         String shortRute = travelService.calculateShortRoute(origin, destination);
         String route[] = shortRute.split(" -> ");

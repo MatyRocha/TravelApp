@@ -1,7 +1,5 @@
 package com.verisk.g2.take_home_test.services;
 
-import com.verisk.g2.take_home_test.dao.AirlineDAO;
-import com.verisk.g2.take_home_test.dao.AirportDAO;
 import com.verisk.g2.take_home_test.dao.RouteDAO;
 import com.verisk.g2.take_home_test.dto.Route;
 import com.verisk.g2.take_home_test.util.Constants;
@@ -14,10 +12,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class TravelService {
-    @Autowired
-    private AirportDAO airportsDAO;
-    @Autowired
-    private AirlineDAO airlinesDAO;
     @Autowired
     private RouteDAO routesDAO;
 
