@@ -2,10 +2,13 @@ package com.verisk.g2.take_home_test.dao.excel;
 
 import com.verisk.g2.take_home_test.dao.AirlineDAO;
 import com.verisk.g2.take_home_test.dto.Airline;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -13,6 +16,7 @@ import java.util.Scanner;
 public class AirlineDAOExcel implements AirlineDAO {
     private static List<Airline> airlines;
     private static final String AIRLINE_FILENAME = "airlines.csv";
+    Logger logger = LoggerFactory.getLogger(AirportDAOExcel.class);
 
     public  List<Airline> getAirlines(){
         if (airlines == null) {
@@ -29,19 +33,18 @@ public class AirlineDAOExcel implements AirlineDAO {
             while (scanner.hasNextLine()) {
                 addAirline(scanner.nextLine());
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            airlines.clear();
+            logger.error( "Problems reading " + AIRLINE_FILENAME,
+                    ex.getMessage(), ex.getStackTrace());
         }
     }
 
-    private void addAirline(String record) {
-        try (Scanner row = new Scanner(record)) {
-            row.useDelimiter("\\s*,\\s*");
-            Airline airline = new Airline(row.next(), row.next(), row.next(), row.next());
-            airlines.add(airline);
-        } catch (Exception ex){
-            ex.printStackTrace();
-        }
+    private void addAirline(String record) throws InputMismatchException {
+        Scanner row = new Scanner(record);
+        row.useDelimiter("\\s*,\\s*");
+        Airline airline = new Airline(row.next(), row.next(), row.next(), row.next());
+        airlines.add(airline);
     }
 
 }

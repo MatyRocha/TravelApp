@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -64,9 +63,7 @@ public class TravelService {
         String result = "";
         // Construct base list for searching
         List<String> options = new ArrayList<>();
-        Iterator routeIterator = routesOrigin.iterator();
-        while (routeIterator.hasNext()) {
-            Route r = (Route) routeIterator.next();
+        for (Route r : routesOrigin){
             String step = r.getDestination();
             String option= origin + " -> " + step;
             options.add(option);
@@ -77,33 +74,27 @@ public class TravelService {
 
     private  String  doNextSearch(List<String> options, String origin, String destination) {
         String result = "";
-        Iterator optionsIterator = options.iterator();
         List<String> nextOptions = new ArrayList<>();
-        while (optionsIterator.hasNext()) {
-            String o = (String ) optionsIterator.next();
+        for (String o : options){
             String[] a = o.split(" -> ");
             String nextSearch = a[a.length-1];
+            // Look for the last destination,as new origin (nextSearch)
             List<Route> routesOrigin = routesDAO.getRoutes().stream()
                     .filter(route-> route.getOrigin().equalsIgnoreCase(nextSearch))
                     .collect(Collectors.toList());
             if (!routesOrigin.isEmpty()) {
                 // Add all the options
-                Iterator routeIterator = routesOrigin.iterator();
-                while (routeIterator.hasNext()) {
-                    Route r = (Route) routeIterator.next();
+                for (Route r : routesOrigin){
                     String step = r.getDestination();
                     if (!o.contains(step)) {
-                        String nextO = o +  " -> " + step;
-                        nextOptions.add(nextO);
+                        String nextOrigin = o +  " -> " + step;
+                        nextOptions.add(nextOrigin);
                         if (step.equalsIgnoreCase(destination)) {
-                            result = nextO;
-                            break;
+                            // we found destination!
+                            return (nextOrigin);
                         }
                     }
                 }
-            }
-            if (!result.isEmpty()) {
-                break;
             }
         }
         if (result.isEmpty() && !nextOptions.isEmpty()) {
@@ -117,12 +108,8 @@ public class TravelService {
     }
 
     private boolean areValidCatalogs(){
-        boolean result = false;
-        if (airportsDAO != null && !airportsDAO.getAirports().isEmpty() &&
+        return  (airportsDAO != null && !airportsDAO.getAirports().isEmpty() &&
                 airlinesDAO != null && !airlinesDAO.getAirlines().isEmpty() &&
-                routesDAO != null && !routesDAO.getRoutes().isEmpty()) {
-            result = true;
-        }
-        return result;
+                routesDAO != null && !routesDAO.getRoutes().isEmpty());
     }
 }

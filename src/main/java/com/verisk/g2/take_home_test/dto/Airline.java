@@ -48,10 +48,10 @@ public class Airline {
     @Override
     public String toString() {
         return "Airline{" +
-                "name='" + name + '\'' +
-                ", code2='" + code2 + '\'' +
-                ", code3='" + code3 + '\'' +
-                ", country='" + country + '\'' +
+                "name='" + name + "'" +
+                ", code2='" + code2 + "'" +
+                ", code3='" + code3 + "'" +
+                ", country='" + country + "'" +
                 '}';
     }
 }

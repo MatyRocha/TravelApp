@@ -5,6 +5,5 @@ import com.verisk.g2.take_home_test.dto.Route;
 import java.util.List;
 
 public interface RouteDAO {
-    public List<Route> getRoutes();
-
+    List<Route> getRoutes();
 }
