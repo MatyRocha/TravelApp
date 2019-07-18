@@ -5,7 +5,9 @@ import com.verisk.g2.take_home_test.dto.Airport;
 import com.verisk.g2.take_home_test.dto.Route;
 import com.verisk.g2.take_home_test.util.Constants;
 
-public class Travel {
+import java.io.Serializable;
+
+public class Travel implements Serializable {
     private String message;
     private Route route;
     private Airport airportOrigin;
