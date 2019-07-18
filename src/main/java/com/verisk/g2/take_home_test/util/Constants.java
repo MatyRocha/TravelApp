@@ -10,6 +10,7 @@ public final class Constants {
 
     // Messages
     public static final String NO_ROUTE =  "No route";
+    public static final String SUCCESS =  "Success";
 
     // Files
     public static final String AIRLINE_FILENAME = "airlines.csv";

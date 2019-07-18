@@ -1,6 +1,7 @@
 package com.verisk.g2.take_home_test.api;
 
 import com.verisk.g2.take_home_test.services.TravelService;
+import com.verisk.g2.take_home_test.to.Travel;
 import com.verisk.g2.take_home_test.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,35 +10,45 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.*;
 import sun.plugin.javascript.navig.Array;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 public class TravelAPI {
     @Autowired
     TravelService travelService;
 
     @RequestMapping(value="/travel", method=RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<String[]> TravelAPI(@RequestParam String origin, @RequestParam String destination) {
+    public ResponseEntity<List<Travel>> TravelAPI(@RequestParam String origin, @RequestParam String destination) {
+
         if (origin.isEmpty() || destination.isEmpty()) {
-            String err[] = {Constants.MISSING_PARAMETERS_INFO};
-            return new ResponseEntity<String[]>(err, HttpStatus.BAD_REQUEST);
+            List<Travel> err = new ArrayList<>();
+            err.add( new Travel(Constants.MISSING_PARAMETERS_INFO));
+            return new ResponseEntity<List<Travel>>(err, HttpStatus.BAD_REQUEST);
         }
+
         String shortRute = travelService.calculateShortRoute(origin, destination);
         String route[] = shortRute.split(" -> ");
 
         if (route.length < 2) {
+            List<Travel> err = new ArrayList<>();
+            err.add( new Travel(shortRute));
+
             if (route[0].equalsIgnoreCase(Constants.NO_ROUTE)) {
-                return new ResponseEntity<String[]>(route, HttpStatus.NOT_FOUND);
+                return new ResponseEntity<List<Travel>>(err, HttpStatus.NOT_FOUND);
             } else if (route[0].equalsIgnoreCase(Constants.FILE_NOT_FOUND)) {
-                return new ResponseEntity<String[]>(route, HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity<List<Travel>>(err, HttpStatus.INTERNAL_SERVER_ERROR);
             } else if (route[0].equalsIgnoreCase(Constants.INVALID_ORIGIN) ||
                     route[0].equalsIgnoreCase(Constants.INVALID_DESTINATION) ) {
-                return new ResponseEntity<String[]>(route, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<List<Travel>>(err, HttpStatus.BAD_REQUEST);
             }
             // Any other error is handled as a bad request.
-            return new ResponseEntity<String[]>(route, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<List<Travel>>(err, HttpStatus.BAD_REQUEST);
         }
 
-        // Route found.
-        return new ResponseEntity<String[]>(route, HttpStatus.OK);
+        // Route found.  Lets gonna expose all the info
+        List<Travel> travel = travelService.getTravelInfo(shortRute);
+        return new ResponseEntity<List<Travel>>(travel, HttpStatus.OK);
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)

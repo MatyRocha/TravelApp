@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,12 +28,17 @@ public class AirportDAOExcel implements AirportDAO {
 
     private void getAirportsFromExcel() {
         airports = new ArrayList<Airport>();
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(Constants.AIRPORT_FILENAME);
-        try (Scanner scanner = new Scanner(inputStream) ) {
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(Constants.AIRPORT_FILENAME) ) {
+            Scanner scanner = new Scanner(inputStream);
             scanner.nextLine(); // skip first row, which is the title
             while (scanner.hasNextLine()) {
                 addAirport(scanner.nextLine());
             }
+            inputStream.close();
+        } catch (IOException ex) {
+            airports.clear();
+            logger.error( "Problems opening " + Constants.AIRPORT_FILENAME,
+                    ex.getMessage(), ex.getStackTrace());
         } catch (NullPointerException ex) {
             airports.clear();
             logger.error( "Problems opening " + Constants.AIRPORT_FILENAME,

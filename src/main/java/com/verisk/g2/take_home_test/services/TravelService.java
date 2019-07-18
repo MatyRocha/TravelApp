@@ -3,7 +3,10 @@ package com.verisk.g2.take_home_test.services;
 import com.verisk.g2.take_home_test.dao.AirlineDAO;
 import com.verisk.g2.take_home_test.dao.AirportDAO;
 import com.verisk.g2.take_home_test.dao.RouteDAO;
+import com.verisk.g2.take_home_test.dto.Airline;
+import com.verisk.g2.take_home_test.dto.Airport;
 import com.verisk.g2.take_home_test.dto.Route;
+import com.verisk.g2.take_home_test.to.Travel;
 import com.verisk.g2.take_home_test.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -107,6 +110,39 @@ public class TravelService {
         }
         return result;
     }
+
+    public List<Travel> getTravelInfo(String steps){
+        List<Travel> travel = new ArrayList<Travel>();
+        String[] travelPoints = steps.split(" -> ");
+        for(int i=0; i<=travelPoints.length-2; ++i){
+            String origin = travelPoints[i];
+            String dest = travelPoints[i+1];
+
+            Travel step = getStepInfo(travelPoints[i],travelPoints[i+1]);
+            travel.add(step);
+        }
+        return travel;
+    }
+
+    private Travel getStepInfo(String origin, String destination) {
+        List<Route> stepRoute = routesDAO.getRoutes().stream()
+                .filter(route-> (route.getOrigin().equalsIgnoreCase(origin) &&
+                        route.getDestination().equalsIgnoreCase(destination)))
+                .collect(Collectors.toList());
+        List<Route> st = routesDAO.getRoutes();
+        Route route = stepRoute.get(0);
+        List<Airline> stepAirline = airlinesDAO.getAirlines().stream()
+                .filter(airline-> (airline.getCode2().equalsIgnoreCase(route.getAirline())))
+                .collect(Collectors.toList());
+        List<Airport> stepAiportOrigin = airportsDAO.getAirports().stream()
+                .filter(airport-> (airport.getIata3().equalsIgnoreCase(origin)))
+                .collect(Collectors.toList());
+        List<Airport> stepAiportDest = airportsDAO.getAirports().stream()
+                .filter(airport-> (airport.getIata3().equalsIgnoreCase(destination)))
+                .collect(Collectors.toList());
+        return (new Travel(route, stepAiportOrigin.get(0),stepAiportDest.get(0), stepAirline.get(0)));
+    }
+
 
     private boolean areValidCatalogs(){
         return  (airportsDAO != null && !airportsDAO.getAirports().isEmpty() &&

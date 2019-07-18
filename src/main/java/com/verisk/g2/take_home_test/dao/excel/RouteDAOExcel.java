@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,12 +28,17 @@ public class RouteDAOExcel implements RouteDAO {
 
     private void getRoutesFromExcel() {
         routes = new ArrayList<Route>();
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(Constants.ROUTE_FILENAME);
-        try (Scanner scanner = new Scanner(inputStream) ) {
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(Constants.ROUTE_FILENAME) ) {
+            Scanner scanner = new Scanner(inputStream);
             scanner.nextLine(); // skip first row, which is the title
             while (scanner.hasNextLine()) {
                 addRoute(scanner.nextLine());
             }
+            inputStream.close();
+        } catch (IOException ex) {
+            routes.clear();
+            logger.error( "Problems opening " + Constants.ROUTE_FILENAME,
+                    ex.getMessage(), ex.getStackTrace());
         } catch (NullPointerException ex) {
             routes.clear();
             logger.error( "Problems opening " + Constants.ROUTE_FILENAME,
